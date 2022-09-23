@@ -5,6 +5,7 @@ import com.database.database.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.util.NoSuchElementException;
 
 @Slf4j
 public class MemberRepository {
@@ -32,6 +33,88 @@ public class MemberRepository {
         }
     }
 
+    public Member findById(String memberId) throws SQLException{
+        String sql = "select * from member where member_id = ?";
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+
+
+        try {
+            connection = getConnection();
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, memberId);
+            set = statement.executeQuery();
+            if(set.next()) { //next를 해줘야 실제 데이터를 가져올 수 있음
+                Member member = new Member();
+
+                member.setMemberId(set.getString("member_id"));
+                member.setMoney(set.getInt("money"));
+
+                return member;
+            }else {
+                throw new NoSuchElementException("member not found memberId = " + memberId);
+            }
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        }finally {
+            close(connection, statement, null);
+        }
+
+    }
+
+    public void updateById(String memberId, int money) throws SQLException{
+
+        String sql = "update member set money = ? where member_id=?";
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet set = null;
+
+        try {
+            connection = getConnection();
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, money);
+            statement.setString(2, memberId);
+            int i = statement.executeUpdate();
+
+            log.info("resultSize = {}", i);
+
+        }catch (SQLException e){
+            log.error("db error");
+            throw e;
+        }finally {
+            close(connection, statement, null);
+        }
+
+    }
+
+    public void deleteMemberById(String memberId) throws SQLException{
+        String sql = "delete from member where member_id = ?";
+
+        Connection connection = null;
+        PreparedStatement statement= null;
+        ResultSet set = null;
+
+        try {
+            connection = getConnection();
+            statement = connection.prepareStatement(sql);
+
+            statement.setString(1, memberId);
+            int set1 = statement.executeUpdate();
+
+            log.info("Result set = {}", set1);
+        }catch (SQLException e){
+            log.error("db error", e);
+            throw e;
+        }finally {
+            close(connection, statement, null);
+        }
+    }
+
+
     private void close(Connection connection, Statement statement, ResultSet set) {
 
         if(set != null){
@@ -58,6 +141,7 @@ public class MemberRepository {
         }
 
     }
+
 
     private Connection getConnection() {
         return DBConnectionUtil.getConnection();
