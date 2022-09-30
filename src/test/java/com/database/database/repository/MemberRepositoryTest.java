@@ -10,27 +10,27 @@ import java.util.NoSuchElementException;
 
 @Slf4j
 class MemberRepositoryTest {
-    MemberRepository memberRepository = new MemberRepository();
+    MemberRepositoryV0 memberRepositoryV0 = new MemberRepositoryV0();
 
     @Test
     void crud() throws SQLException {
 
         Member member = new Member("cksdntjd32", 100000);
-        memberRepository.save(member);
+        memberRepositoryV0.save(member);
 
-        Member findMember = memberRepository.findById(member.getMemberId());
+        Member findMember = memberRepositoryV0.findById(member.getMemberId());
         log.info("findMember = {}", findMember);
 
         Assertions.assertThat(findMember).isEqualTo(member);
 
 
-        memberRepository.updateById(member.getMemberId(), 0);
-        Member updatedMember = memberRepository.findById(member.getMemberId());
+        memberRepositoryV0.updateById(member.getMemberId(), 0);
+        Member updatedMember = memberRepositoryV0.findById(member.getMemberId());
         Assertions.assertThat(updatedMember.getMoney()).isEqualTo(0);
 
-        memberRepository.deleteMemberById(member.getMemberId());
+        memberRepositoryV0.deleteMemberById(member.getMemberId());
 
-        Assertions.assertThatThrownBy(()-> memberRepository.findById(member.getMemberId())).isInstanceOf(NoSuchElementException.class);
+        Assertions.assertThatThrownBy(()-> memberRepositoryV0.findById(member.getMemberId())).isInstanceOf(NoSuchElementException.class);
 
     }
 

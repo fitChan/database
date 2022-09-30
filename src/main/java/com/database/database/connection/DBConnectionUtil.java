@@ -10,7 +10,6 @@ import static com.database.database.connection.ConnectionConst.*;
 
 @Slf4j
 public class DBConnectionUtil {
-
     public static Connection getConnection(){
         try {
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -20,5 +19,4 @@ public class DBConnectionUtil {
             throw new IllegalArgumentException(e);
         }
     }
-
 }
